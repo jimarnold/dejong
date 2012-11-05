@@ -21,12 +21,14 @@ func main() {
   var displayTime float64
   var width int
   var height int
+  var sensitivity float64
 
   flag.IntVar(&iterationsPerFrame, "f", 50000, "iterations per frame")
   flag.IntVar(&totalIterations, "i", 6000000, "total iterations")
   flag.Float64Var(&displayTime, "t", 10, "display time, in seconds, for each plot")
-  flag.IntVar(&width, "w", 800, "width")
-  flag.IntVar(&height, "h", 600, "height")
+  flag.IntVar(&width, "w", 800, "window width")
+  flag.IntVar(&height, "h", 600, "window height")
+  flag.Float64Var(&sensitivity, "s", 0.05, "sensitivity of the attractor. Try lower values for more unpredictable results")
   flag.Parse()
 
   initGlfw(width, height)
@@ -34,7 +36,7 @@ func main() {
 
   palette := NewPalette()
   plot := NewPlot(width, height)
-  attractor := NewAttractor(width, height)
+  attractor := NewAttractor(width, height, sensitivity)
   startTime := time.Now()
   frame := 0
 

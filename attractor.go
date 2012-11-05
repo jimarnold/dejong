@@ -12,20 +12,20 @@ type Attractor struct {
   d float64
   width float64
   height float64
+  sensitivity float64
 }
 
-func NewAttractor(width, height int) *Attractor {
-  a := &Attractor{width: float64(width), height: float64(height)}
+func NewAttractor(width, height int, sensitivity float64) *Attractor {
+  a := &Attractor{width: float64(width), height: float64(height), sensitivity: sensitivity}
   a.seed()
   return a
 }
 
 func (a *Attractor) seed() {
-  const scale = 0.09
-  a.a = rand.Float64() * scale
-  a.b = rand.Float64() * scale
-  a.c = -rand.Float64() * scale
-  a.d = -rand.Float64() * scale
+  a.a = rand.Float64() * a.sensitivity
+  a.b = rand.Float64() * a.sensitivity
+  a.c = -rand.Float64() * a.sensitivity
+  a.d = -rand.Float64() * a.sensitivity
 }
 
 func (a *Attractor) iterate(p *Plot, iterations int) {
