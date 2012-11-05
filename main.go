@@ -10,7 +10,6 @@ import (
 )
 
 const brightnessStep int = 3
-var frame int = 0
 
 func init() {
   rand.Seed( time.Now().UTC().UnixNano())
@@ -18,12 +17,12 @@ func init() {
 
 func main() {
   var iterations int
-  var totalFrames int
+  var displayTime float64
   var width int
   var height int
 
   flag.IntVar(&iterations, "i", 50000, "iterations per frame")
-  flag.IntVar(&totalFrames, "f", 100, "frames per attraction")
+  flag.Float64Var(&displayTime, "t", 10, "display time, in seconds, for each plot")
   flag.IntVar(&width, "w", 800, "width")
   flag.IntVar(&height, "h", 600, "height")
   flag.Parse()
@@ -34,9 +33,13 @@ func main() {
   palette := NewPalette()
   plot := NewPlot(width, height)
   attractor := NewAttractor(width, height)
+  startTime := time.Now()
 
   for glfw.WindowParam(glfw.Opened) == 1 && glfw.Key(glfw.KeyEsc) != glfw.KeyPress {
-    nextFrame(plot, attractor, totalFrames)
+    if time.Since(startTime).Seconds() > displayTime {
+      reseed(plot, attractor)
+      startTime = time.Now()
+    }
     attractor.iterate(plot, iterations)
     render(plot, palette)
     glfw.SwapBuffers()
@@ -74,13 +77,9 @@ func NewPalette() *Palette {
   return palette
 }
 
-func nextFrame(plot *Plot, attractor *Attractor, totalFrames int) {
-  frame++
-  if frame >= totalFrames {
-    frame = 0
-    attractor.seed()
-    plot.Clear()
-  }
+func reseed(plot *Plot, attractor *Attractor) {
+  attractor.seed()
+  plot.Clear()
 }
 
 func initGlfw(width, height int) {
