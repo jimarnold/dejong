@@ -16,12 +16,14 @@ func init() {
 }
 
 func main() {
-  var iterations int
+  var iterationsPerFrame int
+  var totalIterations int
   var displayTime float64
   var width int
   var height int
 
-  flag.IntVar(&iterations, "i", 50000, "iterations per frame")
+  flag.IntVar(&iterationsPerFrame, "f", 50000, "iterations per frame")
+  flag.IntVar(&totalIterations, "i", 6000000, "total iterations")
   flag.Float64Var(&displayTime, "t", 10, "display time, in seconds, for each plot")
   flag.IntVar(&width, "w", 800, "width")
   flag.IntVar(&height, "h", 600, "height")
@@ -34,15 +36,20 @@ func main() {
   plot := NewPlot(width, height)
   attractor := NewAttractor(width, height)
   startTime := time.Now()
+  frame := 0
 
   for glfw.WindowParam(glfw.Opened) == 1 && glfw.Key(glfw.KeyEsc) != glfw.KeyPress {
     if time.Since(startTime).Seconds() > displayTime {
       reseed(plot, attractor)
       startTime = time.Now()
+      frame = 0
     }
-    attractor.iterate(plot, iterations)
+    if frame * iterationsPerFrame < totalIterations {
+      attractor.iterate(plot, iterationsPerFrame)
+    }
     render(plot, palette)
     glfw.SwapBuffers()
+    frame++
   }
 }
 
