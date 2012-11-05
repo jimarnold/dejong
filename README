@@ -9,12 +9,16 @@ More on the maths behind it:
 http://www.cc.gatech.edu/~phlosoft/attractors/
 http://www.complexification.net/gallery/machines/peterdejong/
 
-To build:
+Prerequisites for building on OSX:
 
-go build
+brew install glew
+brew install glfw
+go get github.com/go-gl/gl
+go get github.com/go-gl/glfw
 
 To run:
 
+go build
 ./dejong
 
 Command line flags:
