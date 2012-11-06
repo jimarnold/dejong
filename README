@@ -2,7 +2,7 @@ An implementation of Peter de Jong's strange attractor algorithm, written as an 
 
 It depends on the Go bindings for OpenGL and glfw, which may require you to do some wrangling of the native libraries to install correctly, depending on your environment.
 
-This is my first go program. It was initially ported from a CoffeeScript implementation from @jashkenas and heavily refactored (not that there was anything wrong with the original, but refactoring helps me to understand code).
+This is my first go program. It was initially ported from a CoffeeScript implementation from Jeremy Ashkenas [@jashkenas](http://twitter.com/jashkenas) and heavily refactored (not that there was anything wrong with the original, but refactoring helps me to understand code).
 
 More on the maths behind it:
 
