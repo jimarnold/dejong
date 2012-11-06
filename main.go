@@ -6,10 +6,11 @@ import (
   "flag"
   "math/rand"
   "github.com/go-gl/gl"
+  "github.com/go-gl/glu"
   "github.com/go-gl/glfw"
 )
 
-const brightnessStep int = 3
+const brightnessStep int = 30
 
 func init() {
   rand.Seed( time.Now().UTC().UnixNano())
@@ -35,7 +36,7 @@ func main() {
   defer terminateGlfw()
 
   palette := NewPalette()
-  plot := NewPlot(width, height)
+  plot := NewPlot()
   attractor := NewAttractor(width, height, sensitivity)
   startTime := time.Now()
   frame := 0
@@ -105,6 +106,11 @@ func initGlfw(width, height int) {
 
   glfw.SetWindowSizeCallback(onResize)
   glfw.SetSwapInterval(1)
+  gl.Enable(gl.DEPTH_TEST)
+  gl.Disable(gl.LIGHTING)
+  gl.ClearDepth(1)
+  gl.DepthFunc(gl.LEQUAL)
+  gl.Hint(gl.PERSPECTIVE_CORRECTION_HINT, gl.NICEST)
 }
 
 func terminateGlfw() {
@@ -115,9 +121,7 @@ func onResize(w, h int) {
   gl.MatrixMode(gl.PROJECTION)
   gl.LoadIdentity()
   gl.Viewport(0, 0, w, h)
-  gl.Ortho(0, float64(w), float64(h), 0, -1, 1)
-  gl.ClearColor(0, 0, 0, 0)
-  gl.Clear(gl.COLOR_BUFFER_BIT)
+  glu.Perspective(65.0, float64(w)/float64(h), 0.1, 2000.0)
   gl.MatrixMode(gl.MODELVIEW)
   gl.LoadIdentity()
 }
@@ -125,25 +129,22 @@ func onResize(w, h int) {
 func render(plot *Plot, palette *Palette) {
   gl.ClearColor(0.0, 0.0, 0.05, 0)
   gl.Clear(gl.COLOR_BUFFER_BIT)
-  gl.Enable(gl.POINT_SMOOTH)
-  gl.Enable( gl.BLEND )
-  gl.BlendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA )
-  gl.PointSize(1)
+  gl.LoadIdentity()
+  gl.Translatef(-300,-400,-1200)
+  gl.PointSize(3)
   gl.Begin(gl.POINTS)
 
-  for x := range plot.pixels {
-    for y := range plot.pixels[x] {
-      level := plot.pixels[x][y]
+  for k := range plot.pixels {
+      level := plot.pixels[k]
       if level <= 0 {
         continue
       }
       if level > 255 {
         level = 255
       }
-      rgb := palette.colors[level]
-      gl.Color3ub(rgb.r, rgb.g, rgb.b)
-      gl.Vertex3i(x, y, 0)
-    }
+      //rgb := palette.colors[level]
+      gl.Color3ub(uint8(k.x),uint8(k.y),uint8(k.z))//(rgb.r, rgb.g, rgb.b)
+      gl.Vertex3f(float32(k.x), float32(k.y), float32(k.z))
   }
   gl.End()
 }

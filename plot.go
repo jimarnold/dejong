@@ -1,23 +1,19 @@
 package main
 
-type Plot struct {
-  pixels [][]int
-  x float64
-  y float64
+type Vector struct {
+  x, y, z float64
 }
 
-func NewPlot(width, height int) *Plot {
-  pixels := make([][]int, width)
-  for x := range(pixels) {
-    pixels[x] = make([]int, height)
-  }
+type Plot struct {
+  pixels map[Vector]int
+  v Vector
+}
+
+func NewPlot() *Plot {
+  pixels := make(map[Vector]int)
   return &Plot{pixels:pixels}
 }
 
 func (plot *Plot) Clear() {
-  for x := range(plot.pixels) {
-    for y := range(plot.pixels[x]) {
-      plot.pixels[x][y] = 0
-    }
-  }
+  plot.pixels = make(map[Vector]int)
 }
