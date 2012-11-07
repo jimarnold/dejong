@@ -40,7 +40,7 @@ func main() {
   startTime := time.Now()
   frame := 0
 
-  for glfw.WindowParam(glfw.Opened) == 1 && glfw.Key(glfw.KeyEsc) != glfw.KeyPress {
+  for glfw.WindowParam(glfw.Opened) == 1 {
     if time.Since(startTime).Seconds() > displayTime {
       reseed(plot, attractor)
       startTime = time.Now()
@@ -72,6 +72,7 @@ func initGlfw(width, height int) {
     return
   }
 
+  glfw.SetKeyCallback(onKey)
   glfw.SetWindowSizeCallback(onResize)
   glfw.SetSwapInterval(1)
 }
@@ -91,7 +92,13 @@ func onResize(w, h int) {
   gl.LoadIdentity()
 }
 
-func render(plot *Plot, palette *Palette) {
+func onKey(key, state int) {
+  if glfw.Key(key) == glfw.KeyPress {
+    glfw.CloseWindow()
+  }
+}
+
+func render(plot *Plot, palette Palette) {
   gl.ClearColor(0.0, 0.0, 0.05, 0)
   gl.Clear(gl.COLOR_BUFFER_BIT)
   gl.Enable(gl.POINT_SMOOTH)
@@ -109,8 +116,8 @@ func render(plot *Plot, palette *Palette) {
       if level > 255 {
         level = 255
       }
-      rgb := palette.colors[level]
-      gl.Color3ub(rgb.r, rgb.g, rgb.b)
+      rgb := palette[level]
+      gl.Color3d(rgb.r, rgb.g, rgb.b)
       gl.Vertex3i(x, y, 0)
     }
   }
